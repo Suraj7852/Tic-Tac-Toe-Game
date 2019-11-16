@@ -8,4 +8,7 @@ do
 	PlayingBoard[$counter]=$counter;
 done
 
+computer="X";
+player="O";
+
 echo ${PlayingBoard[@]}
