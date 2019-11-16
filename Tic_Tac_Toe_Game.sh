@@ -33,6 +33,20 @@ function displayBoard(){
 	echo "-----------------------"
 }
 
+function findReplace(){
+	replace=$1;
+	for (( i=1;i<=${#PlayingBoard[@]}; i++ ))
+	do
+		if [ ${PlayingBoard[i]} -eq $replace ]
+		then
+			PlayingBoard[$i]=$player
+		fi
+	done
+	#echo "Not a valid input"
+}
 echo ${PlayingBoard[@]}
 TOSS 
+displayBoard
+read -p "Enter your choice" replace
+findReplace $replace
 displayBoard
