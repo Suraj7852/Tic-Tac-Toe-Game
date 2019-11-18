@@ -24,30 +24,32 @@ function TOSS(){
 
 function displayBoard(){
 	echo "-----------------------"
-	echo "||  ${PlayingBoard[1]}  ||  ${PlayingBoard[2]}  ||  ${PlayingBoard[3]}  ||"
-	echo "-----------------------"
-	echo "||     ||     ||     ||"
-	echo "||  ${PlayingBoard[4]}  ||  ${PlayingBoard[5]}  ||  ${PlayingBoard[6]}  ||"
-	echo "-----------------------"
-	echo "||     ||     ||     ||"
-	echo "||  ${PlayingBoard[7]}  ||  ${PlayingBoard[8]}  ||  ${PlayingBoard[9]}  ||"
-	echo "-----------------------"
+	i=0;
+	for (( count=1; count<=3; count++ ))
+	do
+		i=$(( $i+1 ))
+		echo "||  ${PlayingBoard[$i]}  ||  ${PlayingBoard[$i+1]}  ||  ${PlayingBoard[$i+2]}  ||"
+		echo "-----------------------"
+		i=$(( $i+2 ))
+	done
 }
 
 function findReplace(){
 	replace=$1;
-	for (( i=1;i<=${#PlayingBoard[@]}; i++ ))
+	for (( i=0;i<=${#PlayingBoard[@]}; i++ ))
 	do
-		if [ ${PlayingBoard[i]} -eq $replace ]
+		if [[ ${PlayingBoard[i]} == $replace ]]
 		then
-			PlayingBoard[$i]=$player
+			PlayingBoard[$i]=$PLAYER
 		fi
 	done
-	#echo "Not a valid input"
 }
-echo ${PlayingBoard[@]}
-TOSS 
+
+
 displayBoard
-read -p "Enter your choice" replace
-findReplace $replace
-displayBoard
+while [ true ]
+do
+	read -p "Enter your choice" replace
+	findReplace $replace
+	displayBoard
+done
