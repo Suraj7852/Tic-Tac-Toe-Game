@@ -222,6 +222,14 @@ function takingCorner(){
 	done
 	echo positionToReplay
 }
+
+function takingCenter(){
+	 if [[ ${PlayingBoard[5]} -ne $PLAYER ]] || [[ ${PlayingBoard[5]} -ne $COMPUTER ]]
+         then
+		positionToReplay=5;
+         fi
+	echo positionToReplay
+}
 function possiblityForWinning(){
 	row=$( rowCanWin)
 	echo "in row "$row
@@ -231,6 +239,8 @@ function possiblityForWinning(){
 	echo "in diag "$diag
 	corner=$( takingCorner )
 	echo "in corner "$corner
+	center=$( takingCenter )
+	echo "in center "$center
 	if [[ $row -gt 0 ]]
 	then
 		findReplaceCom $row
@@ -251,6 +261,11 @@ function possiblityForWinning(){
 		findReplaceCom $corner
 		displayBoard
 		positionToReplace=0;
+	elif [[ $center -gt 0 ]]
+	then
+		findReplaceCom $center
+                displayBoard
+                positionToReplace=0;
 	else
 		computerTurn
 	fi
