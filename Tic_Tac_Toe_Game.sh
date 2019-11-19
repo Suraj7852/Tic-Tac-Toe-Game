@@ -5,12 +5,29 @@ echo "--------------------------Tic Tac Toe Game-----------------------"
 COMPUTER="X";
 PLAYER="O";
 moveCount=0;
+positionToReplace=0;
 declare -a PlayingBoard
 
 for (( counter=1; counter<=9; counter++ ))
 do
 	PlayingBoard[$counter]=$counter;
 done
+
+function computerTurn(){
+	local comPlay=0;
+	local moveCountByComputer=0;
+	while [ $moveCountByComputer -ne 1 ]
+	do
+		comPlay=$(( RANDOM%9 + 1 ))
+		if [[ ${PlayingBoard[$comPlay]} -ne $COMPUTER ]] || [[ ${PlayingBoard[$comPlay]} -ne $PLAYER ]]
+		then
+			findReplaceCom $comPlay
+			moveCountByComputer=$(( $moveCountByComputer+1 ))
+			echo $moveCountByComputer $comPlay
+		fi
+	done
+	displayBoard
+}
 
 function TOSS(){
 	toss=$((RANDOM%2))
@@ -37,7 +54,7 @@ function displayBoard(){
 
 function findReplace(){
 	replace=$1;
-	for (( i=0;i<=${#PlayingBoard[@]}; i++ ))
+	for (( i=1;i<=${#PlayingBoard[@]}; i++ ))
 	do
 		if [[ ${PlayingBoard[i]} == $replace ]]
 		then
@@ -48,7 +65,7 @@ function findReplace(){
 
 function findReplaceCom(){
 	replace=$1;
-	for (( i=0;i<=${#PlayingBoard[@]}; i++ ))
+	for (( i=1;i<=${#PlayingBoard[@]}; i++ ))
 	do
 		if [[ ${PlayingBoard[i]} == $replace ]]
 		then
@@ -120,27 +137,30 @@ function winnerCheck() {
 
 function rowCanWin(){
 	local row=0;
+	local winnerRecieved=false;
 	for (( count=1; count<=3; count++ ))
 	do
 		row=$(( $row+1 ))
 		if [[ ${PlayingBoard[$row]} == ${PlayingBoard[$row+1]} ]] || [[ ${PlayingBoard[$row+1]} == ${PlayingBoard[$row+2]} ]] || [[ ${PlayingBoard[$row+2]} == ${PlayingBoard[$row]} ]]
 		then
-			echo $row
 			for (( countInnerLoop=$row; countInnerLoop<=$row+2; countInnerLoop++ ))
 			do
-				if [[ ${PlayingBoard[$i]} -ne O ]] || [[ ${PlayingBoard[$i]} -ne X ]]
+				if [[ ${PlayingBoard[$countInnerLoop]} -ne O ]] || [[ ${PlayingBoard[$countInnerLoop]} -ne X ]]
 				then
-					echo "same variable found in row "$i
+					#echo "count val" $countInnerLoop
+					positionToReplace=$countInnerLoop
 				fi
 			done
 		else
 			row=$(( $row+2 ))
 		fi
 	done
+	echo $positionToReplace
 }
 
 function coloumnCanWin(){
 	local coloumn=0;
+	local winnerRecieved=false;
 	for (( count=1; count<=3; count++ ))
 	do
 		coloumn=$(( $coloumn+1 ))
@@ -150,24 +170,26 @@ function coloumnCanWin(){
 			do
 				if [[ ${PlayingBoard[$coloumn]} -ne O ]] || [[ ${PlayingBoard[$coloumn]} -ne X ]]
 				then
-					echo "Same variable found in col "$coloumn
+					positionToReplace=$coloumn
 				fi
 				coloumn=$(( $coloumn+3 ))
 			done
 		fi
 	done
+	echo $positionToReplace
 }
 
 function diagonalCanWin(){
 	local diagCount=1;
 	local count=1;
+	local winnerRecieved=false;
 	if [[ ${PlayingBoard[$diagCount]} == ${PlayingBoard[$diagCount+4]} ]] || [[ ${PlayingBoard[$diagCount+4]} == ${PlayingBoard[$diagCount+8]} ]] || [[ ${PlayingBoard[$diagCount+8]} == ${PlayingBoard[$diagCount]} ]]
 	then
 		for (( countInnerLoop=1; countInnerLoop<=3; countInnerLoop++ ))
 		do
 			if [[ ${PlayingBoard[$diagCount]} -ne O ]] || [[ ${PlayingBoard[$diagCount]} -ne X ]]
 			then
-				echo "Same vertical found in diagonal " $diagCount
+				positionToReplace=$diagCount
 			fi
 			diagCount=$(( $diagCount+4 ))
 		done
@@ -178,23 +200,47 @@ function diagonalCanWin(){
 			count=$(( $count+2 ))
 			if [[ ${PlayingBoard[$count]} -ne O ]] || [[ ${PlayingBoard[$count]} -ne X ]]
 			then
-				echo "Same veriable found in diagonal "$count
+				positionToReplace=$count
 			fi
 		done
+	fi
+	echo $positionToReplace
+}
+
+function possiblityForWinning(){
+	row=$( rowCanWin)
+	echo "in row "$row
+	col=$( coloumnCanWin )
+	echo "in col "$col
+	diag=$( diagonalCanWin )
+	echo "in diag "$diag
+
+	if [[ $row -gt 0 ]]
+	then
+		findReplaceCom $row
+        	displayBoard
+		positionToReplace=0;
+	elif [[ $col -gt 0 ]]
+	then
+		findReplaceCom $col
+        	displayBoard
+		positionToReplace=0;
+	elif [[ $diag -gt 0 ]]
+	then
+		findReplaceCom $diag
+        	displayBoard
+		positionToReplace=0;
+	else
+		computerTurn
 	fi
 }
 
 displayBoard
 while [ true ]
 do
-	moveCount=$(( $moveCount+1 ))
+	moveCount=$(( $moveCount+2 ))
 	read -p "Enter your choice: " replace
 	findReplace $replace
-	displayBoard
-	rowCanWin
-	coloumnCanWin
-	diagonalCanWin
-	#assignAndReplace
 	winner=$( winnerCheck )
 	if [ $winner == true ]
 	then
@@ -202,9 +248,18 @@ do
 		break;
 	fi
 
-	if [ $moveCount -gt 9 ]
-	then 
-		echo "TIE"
-		break;
-	fi
+	if [ $moveCount -gt 8 ]
+        then
+                echo "TIE"
+                break;
+        fi
+
+	possiblityForWinning
+	winner=$( winnerCheck )
+        if [ $winner == true ]
+        then
+                echo "Computer WON"
+                break;
+        fi
+
 done
