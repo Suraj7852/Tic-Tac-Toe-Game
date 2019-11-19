@@ -126,7 +126,7 @@ function rowCanWin(){
 		if [[ ${PlayingBoard[$row]} == ${PlayingBoard[$row+1]} ]] || [[ ${PlayingBoard[$row+1]} == ${PlayingBoard[$row+2]} ]] || [[ ${PlayingBoard[$row+2]} == ${PlayingBoard[$row]} ]]
 		then
 			echo $row
-			for (( i=$row; i<=$row+2; i++ ))
+			for (( countInnerLoop=$row; countInnerLoop<=$row+2; countInnerLoop++ ))
 			do
 				if [[ ${PlayingBoard[$i]} -ne O ]] || [[ ${PlayingBoard[$i]} -ne X ]]
 				then
@@ -146,7 +146,7 @@ function coloumnCanWin(){
 		coloumn=$(( $coloumn+1 ))
 		if [[ ${PlayingBoard[$coloumn]} == ${PlayingBoard[$coloumn+3]} ]] || [[ ${PlayingBoard[$coloumn+3]} == ${PlayingBoard[$coloumn+6]} ]] || [[ ${PlayingBoard[$coloumn+6]} == ${PlayingBoard[$coloumn]} ]] 
 		then
-			for (( i=1; i<=3; i++ ))
+			for (( countInnerLoop=1; countInnerLoop<=3; countInnerLoop++ ))
 			do
 				if [[ ${PlayingBoard[$coloumn]} -ne O ]] || [[ ${PlayingBoard[$coloumn]} -ne X ]]
 				then
@@ -163,8 +163,7 @@ function diagonalCanWin(){
 	local count=1;
 	if [[ ${PlayingBoard[$diagCount]} == ${PlayingBoard[$diagCount+4]} ]] || [[ ${PlayingBoard[$diagCount+4]} == ${PlayingBoard[$diagCount+8]} ]] || [[ ${PlayingBoard[$diagCount+8]} == ${PlayingBoard[$diagCount]} ]]
 	then
-		echo "In diagonal"
-		for (( i=1; i<=3; i++ ))
+		for (( countInnerLoop=1; countInnerLoop<=3; countInnerLoop++ ))
 		do
 			if [[ ${PlayingBoard[$diagCount]} -ne O ]] || [[ ${PlayingBoard[$diagCount]} -ne X ]]
 			then
@@ -174,8 +173,7 @@ function diagonalCanWin(){
 		done
 	elif [[ ${PlayingBoard[$count+2]} == ${PlayingBoard[$count+4]} ]] || [[ ${PlayingBoard[$count+4]} == ${PlayingBoard[$count+6]} ]] || [[ ${PlayingBoard[$count+6]} == ${PlayingBoard[$count+2]} ]]
 	then
-		echo "Tn diagonal space"
-		for (( i=1; i<=3; i++ ))
+		for (( countInnerLoop=1; countInnerLoop<=3; countInnerLoop++ ))
 		do
 			count=$(( $count+2 ))
 			if [[ ${PlayingBoard[$count]} -ne O ]] || [[ ${PlayingBoard[$count]} -ne X ]]
@@ -189,7 +187,7 @@ function diagonalCanWin(){
 displayBoard
 while [ true ]
 do
-	moveCount=$(( $moveCount+2 ))
+	moveCount=$(( $moveCount+1 ))
 	read -p "Enter your choice: " replace
 	findReplace $replace
 	displayBoard
@@ -209,15 +207,4 @@ do
 		echo "TIE"
 		break;
 	fi
-
-	# read -p "Enter your choice" replace
-	# findReplaceCom $replace
-	# displayBoard
-	# #assignAndReplace
-	# winner=$( winnerCheck )
-	# if [ $winner == true ]
-	# then
-	# 	echo "COMPUTER WON"
-	# 	break;
-	# fi
 done
