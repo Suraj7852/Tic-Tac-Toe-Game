@@ -207,6 +207,21 @@ function diagonalCanWin(){
 	echo $positionToReplace
 }
 
+function takingCorner(){
+	local count=1;
+	for (( countInnerLoop=1; countInnerLoop<=2; countInnerLoop++ ))
+	do
+		if [[ ${PlayingBoard[$count]} -ne $PLAYER ]] || [[ ${PlayingBoard[$count]} -ne $COMPUTER ]]
+		then
+			positionToReplay=$count
+		elif [[ ${PlayingBoard[$count+2]} -ne $PLAYER ]] || [[ ${PlayingBoard[$count+2]} -ne $COMPUTER ]]
+		then
+			positionToReplay=$(( $count+2 ))
+		fi
+		count=$(( $count+6 ))
+	done
+	echo positionToReplay
+}
 function possiblityForWinning(){
 	row=$( rowCanWin)
 	echo "in row "$row
@@ -214,7 +229,8 @@ function possiblityForWinning(){
 	echo "in col "$col
 	diag=$( diagonalCanWin )
 	echo "in diag "$diag
-
+	corner=$( takingCorner )
+	echo "in corner "$corner
 	if [[ $row -gt 0 ]]
 	then
 		findReplaceCom $row
@@ -229,6 +245,11 @@ function possiblityForWinning(){
 	then
 		findReplaceCom $diag
         	displayBoard
+		positionToReplace=0;
+	elif [[ $corner -gt 0 ]]
+	then
+		findReplaceCom $corner
+		displayBoard
 		positionToReplace=0;
 	else
 		computerTurn
