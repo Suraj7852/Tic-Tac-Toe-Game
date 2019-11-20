@@ -41,6 +41,7 @@ function TOSS(){
 }
 
 function displayBoard(){
+	clear
 	echo "-----------------------"
 	displayPosition=0;
 	for (( count=1; count<=3; count++ ))
@@ -224,34 +225,34 @@ function takingCorner(){
 }
 
 function takingCenter(){
-	 if [[ ${PlayingBoard[5]} -ne $PLAYER ]] || [[ ${PlayingBoard[5]} -ne $COMPUTER ]]
-         then
+	if [[ ${PlayingBoard[5]} -ne $PLAYER ]] || [[ ${PlayingBoard[5]} -ne $COMPUTER ]]
+    then
 		positionToReplay=5;
-         fi
+    fi
 	echo $positionToReplay
 }
 
 function possiblityForWinning(){
-	row=$( rowCanWin)
-	col=$( coloumnCanWin )
-	diag=$( diagonalCanWin )
-	corner=$( takingCorner )
-	center=$( takingCenter )
+	local row=$( rowCanWin)
+	local col=$( coloumnCanWin )
+	local diag=$( diagonalCanWin )
+	local corner=$( takingCorner )
+	local center=$( takingCenter )
 
 	if [[ $row -gt 0 ]]
 	then
 		findReplaceComputer $row
-        	displayBoard
+        displayBoard
 		positionToReplace=0;
 	elif [[ $col -gt 0 ]]
 	then
 		findReplaceComputer $col
-        	displayBoard
+        displayBoard
 		positionToReplace=0;
 	elif [[ $diag -gt 0 ]]
 	then
 		findReplaceComputer $diag
-        	displayBoard
+        displayBoard
 		positionToReplace=0;
 	elif [[ $corner -gt 0 ]]
 	then
@@ -261,8 +262,8 @@ function possiblityForWinning(){
 	elif [[ $center -gt 0 ]]
 	then
 		findReplaceComputer $center
-                displayBoard
-                positionToReplace=0;
+        displayBoard
+        positionToReplace=0;
 	else
 		computerTurn
 	fi
