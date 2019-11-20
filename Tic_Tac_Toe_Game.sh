@@ -23,4 +23,17 @@ function TOSS(){
 }
 
 echo ${PlayingBoard[@]}
-echo $( TOSS )
+toss=$( TOSS )
+
+while [ true ]
+do
+	if [ $toss == $PLAYER ]
+	then
+		read -p "Enter your choice" replace
+		findReplace $replace
+		displayBoard
+		toss=$COMPUTER
+	else
+		toss=$PLAYER
+	fi
+done
