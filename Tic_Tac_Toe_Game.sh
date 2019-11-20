@@ -42,34 +42,34 @@ function TOSS(){
 
 function displayBoard(){
 	echo "-----------------------"
-	i=0;
+	displayPosition=0;
 	for (( count=1; count<=3; count++ ))
 	do
-		i=$(( $i+1 ))
-		echo "||  ${PlayingBoard[$i]}  ||  ${PlayingBoard[$i+1]}  ||  ${PlayingBoard[$i+2]}  ||"
+		displayPosition=$(( $displayPosition+1 ))
+		echo "||  ${PlayingBoard[$displayPosition]}  ||  ${PlayingBoard[$displayPosition+1]}  ||  ${PlayingBoard[$displayPosition+2]}  ||"
 		echo "-----------------------"
-		i=$(( $i+2 ))
+		displayPosition=$(( $displayPosition+2 ))
 	done
 }
 
-function findReplace(){
+function findReplacePlayer(){
 	replace=$1;
-	for (( i=1;i<=${#PlayingBoard[@]}; i++ ))
+	for (( indexValue=1;indexValue<=${#PlayingBoard[@]}; indexValue++ ))
 	do
-		if [[ ${PlayingBoard[i]} == $replace ]]
+		if [[ ${PlayingBoard[indexValue]} == $replace ]]
 		then
-			PlayingBoard[$i]=$PLAYER
+			PlayingBoard[$indexValue]=$PLAYER
 		fi
 	done
 }
 
-function findReplaceCom(){
+function findReplaceComputer(){
 	replace=$1;
-	for (( i=1;i<=${#PlayingBoard[@]}; i++ ))
+	for (( indexValue=1;indexValue<=${#PlayingBoard[@]}; indexValue++ ))
 	do
-		if [[ ${PlayingBoard[i]} == $replace ]]
+		if [[ ${PlayingBoard[indexValue]} == $replace ]]
 		then
-			PlayingBoard[$i]=$COMPUTER
+			PlayingBoard[$indexValue]=$COMPUTER
 		fi
 	done
 }
@@ -220,7 +220,7 @@ function takingCorner(){
 		fi
 		count=$(( $count+6 ))
 	done
-	echo positionToReplay
+	echo $positionToReplay
 }
 
 function takingCenter(){
@@ -228,42 +228,39 @@ function takingCenter(){
          then
 		positionToReplay=5;
          fi
-	echo positionToReplay
+	echo $positionToReplay
 }
+
 function possiblityForWinning(){
 	row=$( rowCanWin)
-	echo "in row "$row
 	col=$( coloumnCanWin )
-	echo "in col "$col
 	diag=$( diagonalCanWin )
-	echo "in diag "$diag
 	corner=$( takingCorner )
-	echo "in corner "$corner
 	center=$( takingCenter )
-	echo "in center "$center
+
 	if [[ $row -gt 0 ]]
 	then
-		findReplaceCom $row
+		findReplaceComputer $row
         	displayBoard
 		positionToReplace=0;
 	elif [[ $col -gt 0 ]]
 	then
-		findReplaceCom $col
+		findReplaceComputer $col
         	displayBoard
 		positionToReplace=0;
 	elif [[ $diag -gt 0 ]]
 	then
-		findReplaceCom $diag
+		findReplaceComputer $diag
         	displayBoard
 		positionToReplace=0;
 	elif [[ $corner -gt 0 ]]
 	then
-		findReplaceCom $corner
+		findReplaceComputer $corner
 		displayBoard
 		positionToReplace=0;
 	elif [[ $center -gt 0 ]]
 	then
-		findReplaceCom $center
+		findReplaceComputer $center
                 displayBoard
                 positionToReplace=0;
 	else
@@ -272,11 +269,13 @@ function possiblityForWinning(){
 }
 
 displayBoard
+toss=$( TOSS )
+
 while [ true ]
 do
 	moveCount=$(( $moveCount+2 ))
 	read -p "Enter your choice: " replace
-	findReplace $replace
+	findReplacePlayer $replace
 	winner=$( winnerCheck )
 	if [ $winner == true ]
 	then
@@ -284,7 +283,7 @@ do
 		break;
 	fi
 
-	if [ $moveCount -gt 8 ]
+	if [ $moveCount -gt 9 ]
         then
                 echo "TIE"
                 break;
@@ -292,10 +291,11 @@ do
 
 	possiblityForWinning
 	winner=$( winnerCheck )
-        if [ $winner == true ]
+	if [ $winner == true ]
         then
-                echo "Computer WON"
-                break;
+               	echo "Computer WON"
+               	break;
         fi
 
 done
+displayBoard
