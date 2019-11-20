@@ -21,7 +21,7 @@ function computerTurn(){
 		comPlay=$(( RANDOM%9 + 1 ))
 		if [[ ${PlayingBoard[$comPlay]} -ne $COMPUTER ]] || [[ ${PlayingBoard[$comPlay]} -ne $PLAYER ]]
 		then
-			findReplaceCom $comPlay
+			findReplaceComputer $comPlay
 			moveCountByComputer=$(( $moveCountByComputer+1 ))
 			echo $moveCountByComputer $comPlay
 		fi
@@ -269,33 +269,39 @@ function possiblityForWinning(){
 }
 
 displayBoard
-toss=$( TOSS )
-
+echo $toss
 while [ true ]
 do
-	moveCount=$(( $moveCount+2 ))
-	read -p "Enter your choice: " replace
-	findReplacePlayer $replace
-	winner=$( winnerCheck )
-	if [ $winner == true ]
+	moveCount=$(( $moveCount+1 ))
+	if [ $toss == $PLAYER ]
 	then
-		echo "PLAYER WON"
-		break;
-	fi
-
-	if [ $moveCount -gt 9 ]
-        then
-                echo "TIE"
-                break;
-        fi
-
-	possiblityForWinning
-	winner=$( winnerCheck )
-	if [ $winner == true ]
+		read -p "Enter your choice: " replace
+		findReplacePlayer $replace
+		winner=$( winnerCheck )
+		if [ $winner == true ]
+		then
+			echo "PLAYER WON"
+			break;
+		fi
+		toss=$COMPUTER;
+	else
+		possiblityForWinning
+		winner=$( winnerCheck )
+		if [ $winner == true ]
         then
                	echo "Computer WON"
                	break;
         fi
+		toss=$PLAYER
+	fi
+
+	if [ $moveCount -gt 8 ]
+    then
+        echo "TIE"
+        break;
+    fi
 
 done
-displayBoard
+
+
+
